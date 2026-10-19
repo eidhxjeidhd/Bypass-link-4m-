@@ -1,57 +1,45 @@
 // ==UserScript==
-// @name         Bypass Link4m Auto
+// @name         Menu Bypass Link4m Auto
 // @namespace    http://tampermonkey.net/
-// @version      1.2
-// @description  Tự động vượt qua link rút gọn Link4m để lấy link gốc
+// @version      2.0
+// @description  Menu hỗ trợ tương tác trang Link4m
 // @author       AI Collaborator
 // @match        https://link4m.com/*
 // @match        https://*.link4m.co/*
-// @grant        GM_addStyle
-// @grant        unsafeWindow
+// @grant        none
 // @run-at       document-end
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    // Tạo giao diện bảng điều khiển nhỏ trên trang
-    const panel = document.createElement('div');
-    panel.id = 'bypass-control-panel';
-    panel.innerHTML = `
-        <div style="position: fixed; bottom: 20px; right: 20px; z-index: 999999; background: #1e293b; color: #fff; padding: 12px 16px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-family: sans-serif; font-size: 14px;">
-            <div style="font-weight: bold; margin-bottom: 8px; color: #38bdf8;">Bypass Link4m Tool</div>
-            <div id="bypass-status" style="margin-bottom: 8px; color: #cbd5e1;">Đang chờ kích hoạt...</div>
-            <button id="btn-run-bypass" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;">Chạy Bypass</button>
+    // Tạo menu giao diện nổi trên màn hình
+    const menu = document.createElement('div');
+    menu.innerHTML = `
+        <div id="link4m-menu" style="position: fixed; top: 70px; right: 10px; z-index: 999999; background: #0f172a; color: #fff; padding: 12px; border-radius: 12px; border: 1px solid #38bdf8; box-shadow: 0 4px 20px rgba(0,0,0,0.5); font-family: sans-serif; font-size: 13px; width: 180px;">
+            <div style="font-weight: bold; margin-bottom: 8px; color: #38bdf8; text-align: center;">Menu Link4m</div>
+            <button id="btn-auto-click" style="background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: bold; margin-bottom: 6px;">Tự động Click</button>
+            <button id="btn-scroll-bottom" style="background: #10b981; color: white; border: none; padding: 8px; border-radius: 6px; width: 100%; cursor: pointer; font-weight: bold;">Cuộn xuống mã</button>
         </div>
     `;
-    document.body.appendChild(panel);
+    document.body.appendChild(menu);
 
-    document.getElementById('btn-run-bypass').addEventListener('click', () => {
-        const statusEl = document.getElementById('bypass-status');
-        statusEl.textContent = "Đang xử lý vượt link...";
+    // Tính năng tự động tìm nút "Click vào đây để tiếp tục" hoặc nút xanh lá
+    document.getElementById('btn-auto-click').addEventListener('click', () => {
+        const targetBtn = document.querySelector('#landing-cnt button, #landing-cnt .btn, button, .btn-success');
+        if (targetBtn) {
+            targetBtn.click();
+            alert("Đã bấm nút tiếp tục!");
+        } else {
+            alert("Chưa tìm thấy nút hoặc chưa hoàn thành Captcha!");
+        }
+    });
 
-        // Tự động tìm và click các nút tiếp tục / lấy link
-        const interval = setInterval(() => {
-            const buttons = document.querySelectorAll('button, a.btn, input[type="button"], .get-link');
-            buttons.forEach(btn => {
-                const text = btn.innerText || btn.value || "";
-                if (text.includes("Get Link") || text.includes("Lấy Link") || text.includes("Click Here") || text.includes("Tiếp tục")) {
-                    if (!btn.disabled) {
-                        btn.click();
-                    }
-                }
-            });
-
-            // Lọc ra link đích cuối cùng không thuộc tên miền link4m
-            const links = document.querySelectorAll('a[href]');
-            links.forEach(a => {
-                if (a.href && !a.href.includes("link4m") && !a.href.startsWith("javascript") && !a.href.startsWith("#")) {
-                    statusEl.textContent = "Đã tìm thấy link đích!";
-                    clearInterval(interval);
-                    // Tự động chuyển hướng đến link gốc
-                    window.location.href = a.href;
-                }
-            });
-        }, 1500);
+    // Tính năng cuộn nhanh xuống phần lấy mã / hướng dẫn
+    document.getElementById('btn-scroll-bottom').addEventListener('click', () => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
     });
 })();
