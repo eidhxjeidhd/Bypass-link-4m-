@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Bypass Link4M - Gà Gaming
+// @name         Bypass Link4M - Gái Gaming
 // @namespace    https://link4m.net/
-// @version      4.4.1
-// @description  Tool bypass Link4m tối ưu tốc độ cho Gà Gaming
+// @version      4.4.2
+// @description  Tool bypass link4m hiển thị tên Gái Gaming
 // @match        https://link4m.net/*
 // @match        https://link4m.com/*
 // @match        https://*.link4m.net/*
@@ -11,7 +11,7 @@
 // @run-at       document-start
 // @icon         https://raw.githubusercontent.com/longndev/VNBP/refs/heads/main/Link4M/assets/link4m.png
 // @connect      *
-// @author       Gà Gaming & VNBP
+// @author       Gái Gaming & VNBP
 // @updateURL    https://github.com/longndev/VNBP/raw/refs/heads/main/Link4M/link4m.user.js
 // @downloadURL  https://github.com/longndev/VNBP/raw/refs/heads/main/Link4M/link4m.user.js
 // @require      https://raw.githubusercontent.com/longndev/VNBP/refs/heads/main/Link4M/link4m.js
@@ -33,6 +33,21 @@
 
 (function() {
     'use strict';
-    // Gà Gaming Script Wrapper
-    console.log("Đã kích hoạt Bypass Link4m - Gà Gaming!");
+
+    // Dùng MutationObserver để theo dõi và tự động đổi chữ "Link4M Cuttay" thành "Gái Gaming" ngay khi menu xuất hiện
+    const observer = new MutationObserver((mutations, obs) => {
+        const elements = document.querySelectorAll('*');
+        for (let el of elements) {
+            if (el.childNodes.length === 1 && el.childNodes[0].nodeType === Node.TEXT_NODE) {
+                if (el.textContent.includes("Link4M Cuttay")) {
+                    el.textContent = el.textContent.replace("Link4M Cuttay", "Gái Gaming");
+                }
+            }
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
 })();
